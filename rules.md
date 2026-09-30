@@ -1,106 +1,75 @@
-# Processing Rules and Guidelines
+# Rules
 
-## Data Extraction Rules
+The translator's job is fidelity, not judgment. It converts a repository snapshot into the Component Manifest defined in `reference/output-schema.md`. That schema is the only output contract. If these rules and the schema ever disagree, the schema wins.
 
-### From README
-- Extract title/name from first heading
-- Extract description from first paragraph
-- Identify features from bulleted lists
-- Extract installation instructions if present
-- Pull usage examples and code snippets
+## Hard rules
 
-### From package.json (JavaScript/Node.js)
-- `name` → Component name
-- `description` → Component description
-- `version` → Component version
-- `keywords` → Component tags/classification
-- `author` → Maintainer information
-- `dependencies` → Component dependencies
-- `repository.url` → Source repository
-- `homepage` → Documentation URL
-- `license` → License identifier
+1. **Output only the manifest.**  
+   Start with `# Component Manifest`, end after Section 8. No preamble, summary, or commentary.
 
-### From pyproject.toml (Python)
-- `project.name` → Component name
-- `project.description` → Short description
-- `project.version` → Component version
-- `project.authors` → Maintainer information
-- `project.keywords` → Classification tags
-- `project.dependencies` → Component dependencies
-- `project.urls.Homepage` → Documentation URL
-- `project.license.text` → License identifier
+2. **Eight sections, exact headings, fixed order.**  
+   One table per section with the exact columns, or the single line `none found in source`.
 
-### From go.mod (Go)
-- Module name → Component name
-- Comments → Purpose/description
-- require statements → Dependencies
-- Version constraints → Dependency versions
+3. **Cite everything.**  
+   Every row carries at least one locator in an allowed form:
+   - `[path:N-N]`
+   - `[header:repository-identifier]`
+   - `[header:source-snapshot-identifier]`
+   - `[tree]`  
+   A row without a locator is invalid and must be corrected or removed.
 
-## Normalization Rules
+4. **Copy, never rephrase.**  
+   Identifiers, literals, paths, dependency names, version specifiers, and route strings are copied exactly, inside code spans.
 
-### Naming
-- Convert to kebab-case for identifiers
-- Use PascalCase for type names
-- Use UPPER_SNAKE_CASE for constants
+5. **Absence has one spelling.**  
+   - A field with no evidence is `not in source`.  
+   - An empty section is `none found in source`.  
+   Never mix them, and never attach a locator to `not in source`.
 
-### Versioning
-- Enforce semantic versioning (MAJOR.MINOR.PATCH)
-- Tag pre-releases with -alpha, -beta, -rc
-- Include build metadata when available
+6. **No inference.**  
+   Do not infer frameworks, roles, owners, versions, purposes, or architecture. Do not name things the source does not name. Labels like `"entry point"`, `"main app"`, or `"backend"` are forbidden unless that exact label is written in source.
 
-### Dependency Resolution
-- Expand version ranges to explicit constraints
-- Identify transitive dependencies
-- Mark optional vs. required dependencies
-- Flag version conflicts
+7. **Nothing is silently dropped.**  
+   - Every supplied file appears in Section 2.  
+   - Every non-exempt line ends up cited in Sections 3 to 7. Leftovers go to Section 7.
 
-## Enrichment Rules
+8. **When unsure, do not guess.**  
+   Put the item in Section 7 or raise a Section 8 exception. Do not omit it and do not classify it.
 
-### Classification
-1. Determine component type:
-   - Library/Package
-   - Service/Application
-   - Tool/CLI
-   - Framework
-   - Template/Boilerplate
-   - Configuration
+## Working procedure
 
-2. Assign domain tags:
-   - infrastructure, database, api, ui, testing, etc.
+1. **Read the header.**  
+   Fill Section 1 from `[header:...]` locators.
 
-3. Identify maturity level:
-   - Alpha, Beta, Stable, Maintenance, Deprecated
+2. **List every FILE TREE path into Section 2**, then fill `Lines` and `Mapped to` at the end.
 
-### Relationships
-- Identify parent/child components
-- Detect sibling/related components
-- Mark known consumers
-- Flag known dependencies
+3. **For each supplied file in tree order**, extract:
+   - Top-level declarations → Section 3
+   - Dependency declarations and imports → Section 4
+   - String-literal route declarations → Section 5
+   - Config key/value pairs plus package metadata → Section 6
 
-## Validation Rules
+4. **Compute uncited non-exempt lines** and emit them as Section 7 runs.
 
-### Required Fields
-- Component name (non-empty)
-- Description (minimum 10 characters)
-- Version (semantic format)
-- Type (from defined list)
+5. **Raise Section 8 exceptions** only for the five schema types:
+   - `missing-referenced-file`
+   - `doc-code-mismatch`
+   - `unreadable-content`
+   - `header-missing`
+   - `unnumbered-source`
 
-### Constraints
-- No circular dependencies
-- All dependencies must be resolvable
-- License must be SPDX-compliant
-- URLs must be valid and accessible
+6. **Run the schema's validation checklist** before returning the output.
 
-## Export Rules
+## Section-specific rules
 
-### Format Compliance
-- Output valid JSON/YAML
-- Include all required schema fields
-- Preserve data types (no string-encoded numbers)
-- Escape special characters properly
+- **One table per section.** No sub-tables. Dependency origin is distinguished by the `Group` column, not by separate tables.
+- **Component detail cap.** `Definition` is the declaration line only. No narrative, no JSX tree, no bullet lists. `Kind` is the declaring keyword as written in source.
+- **Package metadata.** Fields such as `name`, `version`, `private`, and `type` from `package.json` are Section 6 rows, not Section 1 fields.
+- **Absence claims.** Do not assert repository-wide absences (`no tests`, `no routes`, `no env vars`) in Section 8. Empty Sections 5 and 6 already say `none found in source`.
+- **Mismatch exceptions.** A `doc-code-mismatch` quotes both sides in code spans and cites both locators. It states the discrepancy, never a cause or a fix.
 
-### Metadata
-- Include extraction timestamp
-- Record data source version
-- Note any warnings or conflicts
-- Track manual edits if applicable
+## Determinism
+
+- Rows are ordered by FILE TREE order, then ascending start line.
+- Section 3 IDs are sequential in that order.
+- Two runs on the same snapshot should produce the same section headings, same column headers, and the same row set. If they do not, the rule that allowed the difference is too loose and needs tightening.
