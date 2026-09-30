@@ -1,51 +1,94 @@
-🧭 GitHub Repo → Component Manifest
-Property	Value
-Input	Repository snapshot (file tree + file contents, line-numbered)
-Output	Fixed-shape Component Manifest (8 sections, strict schema)
-Contract	Every output line cites [path:N-N], [header:...], or [tree], or says not in source
-What this converts
+📦 GitHub Repo → Component Manifest Translator
+A folder-based AI translator that converts a supplied GitHub repository snapshot into a traceable inventory of components ready for extraction, inspection, or handoff.
+
+🎯 What it does
+Input	Output
+Repository file tree + file contents (line-numbered)	Fixed-shape Component Manifest (8 sections, strict schema v2)
+Every output claim must point to a source locator. The translator:
+
+❌ Never fetches a repository from a URL
+
+❌ Never guesses a framework or assigns architectural roles
+
+❌ Never fills missing details with plausible values
+
+✅ Always traces claims to [path:N-N], [header:...], or [tree]
+
+✅ Always marks missing data as not in source
+
+📁 Folder contents
 text
-┌─────────────────────────────────────┐
-│  Repository Snapshot                │
-│  - FILE TREE                        │
-│  - File contents (line-numbered)    │
-│  - Optional headers                 │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  Component Manifest (strict, v2)    │
-│  1. Repository Record               │
-│  2. Source Coverage                 │
-│  3. Component Manifest              │
-│  4. Dependency Manifest             │
-│  5. Route Manifest                  │
-│  6. Configuration Manifest          │
-│  7. Unmapped Source Items           │
-│  8. Translation Exceptions          │
-└─────────────────────────────────────┘
-Purpose
-Convert repository evidence into a component-level handoff that another engineer or AI agent can extract, inspect, or replace without guessing. The manifest indexes:
+github-repo-to-component-manifest/
+├── 📄 identity.md           # What it converts (repo snapshot → manifest)
+├── 📐 rules.md              # Mapping rules, evidence requirements, missing-data handling
+├── 💬 examples.md           # 2 complete input/output pairs (strict schema)
+├── 📖 README.md             # This file — usage instructions for Claude
+└── 📚 reference/
+    ├── input-format.md      # How to format the repository snapshot
+    └── output-schema.md     # The exact output contract (strict, v2)
+🚀 How to use in Claude
+Step	Action
+1	Create a Claude Project
+2	Upload this complete folder as Project Knowledge
+3	Paste one repository snapshot using reference/input-format.md as a template
+4	Prompt: "Translate this repository snapshot into the Component Manifest contract. Apply the folder rules exactly."
+5	Save the returned Markdown as component-manifest.md beside the snapshot
+📋 Required input
+At minimum, provide:
 
-✅ Source files (with coverage tracking)
+✅ A file tree
 
-✅ Top-level declarations (functions, classes, consts, etc.)
+✅ Contents for each file you want included
 
-✅ Dependencies (package.json, imports, README mentions)
+✅ Stable line numbers (either supplied or added without changing content)
 
-✅ Routes (string-literal route declarations only)
+⚠️ A GitHub URL is optional identification metadata only. It is not permission to retrieve, assume, or invent repository content.
 
-✅ Configuration keys (explicit declarations in config files)
+✅ Verification checklist
+Before accepting an output, verify:
 
-✅ Unmapped items (nothing silently dropped)
+Starts with # Component Manifest, eight headings exact and in order, nothing outside them
 
-✅ Translation exceptions (missing files, doc/code mismatches, etc.)
+One table per section, exact column headers, or none found in source
 
-Non-negotiable rules
-Rule	Enforcement
-Fixed output shape	Eight mandatory sections in exact order; empty sections say none found in source
-Nothing invented	Every claim requires a locator ([path:N-N], [header:...], [tree]); missing fields say not in source
-Nothing dropped	Every supplied file appears in Section 2; every non-exempt line is cited in Sections 3–7
-This is an inventory and mapping tool, not an architectural review, summary, recommendation, or refactor plan.
+Every locator matches the allowed forms: [path:N-N], [header:...], [tree]
+
+I1: every FILE TREE path is in Section 2 exactly once
+
+I2: no non-exempt line is uncited by Sections 3 to 7
+
+I3: sampled values appear verbatim in cited lines
+
+Section 4 has one table with a valid Group on every row
+
+No Kind, Stated role, or label is a translator invention
+
+Every Section 8 row has a valid Type and a locator (or not in source only for header-missing)
+
+📖 Example
+See examples.md for two complete contract examples:
+
+Small JavaScript repo — one exported function + lodash dependency
+
+Sparse repo — README only, no extractable code components
+
+🚫 Non-goals
+This translator does not:
+
+Summarize the repository
+
+Evaluate code quality
+
+Propose refactors
+
+Estimate effort
+
+Infer service boundaries
+
+Generate documentation
+
+Extract content from an unprovided GitHub URL
+
+Built for the Clief Notes Weekly Comp #13: The Translator — a discipline of fidelity over judgment. Every line traces to source. Nothing invented. Nothing dropped.
 
 Source of truth: reference/output-schema.md (strict, v2) and rules.md.
