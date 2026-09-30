@@ -1,206 +1,142 @@
-# Real-World Examples
+Examples
+Two complete input/output pairs that show the contract holding.
 
-## Example 1: JavaScript Library
+Example 1: Small JavaScript repo with one component
+Input snapshot
+text
+REPOSITORY IDENTIFIER
+example/tiny-js-repo
 
-### Source Repository
-```
-react-query/
-├── README.md
-├── package.json
-├── src/
-│   └── ...
-└── docs/
-    └── ...
-```
+SOURCE SNAPSHOT IDENTIFIER
+main-2026-09-30
 
-### package.json
-```json
-{
-  "name": "@tanstack/react-query",
-  "version": "5.0.0",
-  "description": "Powerful asynchronous state management for TS/JS, React, Solid, Svelte and Vue Query",
-  "keywords": ["query", "cache", "async", "state", "management"],
-  "author": "TanStack",
-  "license": "MIT",
-  "dependencies": {
-    "react": "^18.0.0"
-  }
-}
-```
+FILE TREE
+package.json
+src/math.js
 
-### Generated Manifest
-```yaml
-component:
-  name: react-query
-  version: 5.0.0
-  type: library
-  language: javascript
-  description: Powerful asynchronous state management for TS/JS, React, Solid, Svelte and Vue Query
-  keywords:
-    - query
-    - cache
-    - async
-    - state
-    - management
-  maintainers:
-    - name: TanStack
-  license: MIT
-  repository: https://github.com/TanStack/query
-  dependencies:
-    - name: react
-      version: "^18.0.0"
-      type: peer
-```
+--- package.json ---
+1: {
+2:   "name": "tiny-js-repo",
+3:   "version": "1.0.0",
+4:   "dependencies": {
+5:     "lodash": "^4.17.21"
+6:   }
+7: }
 
----
+--- src/math.js ---
+1: import _ from "lodash";
+2: 
+3: export function add(a, b) {
+4:   return a + b;
+5: }
+Output (strict schema)
+text
+# Component Manifest
 
-## Example 2: Python Package
+## 1. Repository Record
 
-### Source Repository
-```
-django/
-├── README.md
-├── pyproject.toml
-├── django/
-│   └── ...
-└── docs/
-    └── ...
-```
+| Field | Value | Source |
+|-------|-------|--------|
+| `repository_identifier` | `example/tiny-js-repo` | `[header:repository-identifier]` |
+| `source_snapshot_identifier` | `main-2026-09-30` | `[header:source-snapshot-identifier]` |
 
-### pyproject.toml
-```toml
-[project]
-name = "Django"
-version = "4.2.0"
-description = "A high-level Python web framework that encourages rapid development."
-authors = [{name = "Django Software Foundation"}]
-keywords = ["web", "framework", "python", "mvc"]
-license = {text = "BSD-3-Clause"}
+## 2. Source Coverage
 
-[project.urls]
-Homepage = "https://www.djangoproject.com"
-Repository = "https://github.com/django/django"
+| Path | Lines | Mapped to | Source |
+|------|-------|-----------|--------|
+| `package.json` | 7 | 4, 6 | `[tree]` |
+| `src/math.js` | 5 | 3, 4, 7 | `[tree]` |
 
-[project.optional-dependencies]
-testing = ["pytest>=6.0"]
-```
+## 3. Component Manifest
 
-### Generated Manifest
-```yaml
-component:
-  name: django
-  version: 4.2.0
-  type: framework
-  language: python
-  description: A high-level Python web framework that encourages rapid development.
-  keywords:
-    - web
-    - framework
-    - python
-    - mvc
-  maintainers:
-    - name: Django Software Foundation
-  license: BSD-3-Clause
-  repository: https://github.com/django/django
-  homepage: https://www.djangoproject.com
-  maturity: stable
-  optionalFeatures:
-    - name: testing
-      dependencies:
-        - name: pytest
-          version: ">=6.0"
-```
+| ID | Kind | Name | Definition | Stated role | Evidence |
+|----|------|------|------------|-------------|----------|
+| `component-001` | `function` | `add` | `export function add(a, b) {` | `not in source` | `[src/math.js:3-5]` |
 
----
+## 4. Dependency Manifest
 
-## Example 3: Go Module
+| Name | Version | Group | Source |
+|------|---------|-------|--------|
+| `lodash` | `"^4.17.21"` | `dependencies` | `[package.json:5-5]` |
+| `lodash` | `"lodash"` | `import` | `[src/math.js:1-1]` |
 
-### Source Repository
-```
-kubernetes/
-├── README.md
-├── go.mod
-├── go.sum
-└── ...
-```
+## 5. Route Manifest
 
-### go.mod
-```
-module k8s.io/kubernetes
+none found in source
 
-go 1.20
+## 6. Configuration Manifest
 
-require (
-  k8s.io/api v0.28.0
-  k8s.io/client-go v0.28.0
-  github.com/spf13/cobra v1.7.0
-)
-```
+| Key | Value | Evidence |
+|-----|-------|----------|
+| `package.json#name` | `"tiny-js-repo"` | `[package.json:2-2]` |
+| `package.json#version` | `"1.0.0"` | `[package.json:3-3]` |
 
-### Generated Manifest
-```yaml
-component:
-  name: kubernetes
-  version: 1.28.0
-  type: system
-  language: go
-  description: Production-Grade Container Orchestration
-  keywords:
-    - orchestration
-    - containers
-    - devops
-  license: Apache-2.0
-  repository: https://github.com/kubernetes/kubernetes
-  dependencies:
-    - name: k8s.io/api
-      version: 0.28.0
-    - name: k8s.io/client-go
-      version: 0.28.0
-    - name: github.com/spf13/cobra
-      version: 1.7.0
-  maturity: stable
-```
+## 7. Unmapped Source Items
 
----
+| Path | Item | Evidence |
+|------|------|----------|
+| `src/math.js` | `import _ from "lodash";` | `[src/math.js:1-1]` |
 
-## Example 4: Transformation Decision Tree
+## 8. Translation Exceptions
 
-### Input: Unknown Repository
+| # | Type | Exception | Evidence |
+|---|------|-----------|----------|
+| 1 | `header-missing` | No `REPOSITORY IDENTIFIER` line supplied. | `not in source` |
+Example 2: Sparse repo (README only)
+Input snapshot
+text
+REPOSITORY IDENTIFIER
+example/readme-only
 
-```
-1. Does it have package.json?
-   YES → Use JavaScript/Node.js rules
-   NO → Continue
+SOURCE SNAPSHOT IDENTIFIER
+export-1
 
-2. Does it have pyproject.toml or setup.py?
-   YES → Use Python rules
-   NO → Continue
+FILE TREE
+README.md
 
-3. Does it have go.mod?
-   YES → Use Go rules
-   NO → Continue
+--- README.md ---
+1: # Sample
+2: 
+3: A repo with no code.
+Output (strict schema)
+text
+# Component Manifest
 
-4. Does it have Cargo.toml?
-   YES → Use Rust rules
-   NO → Continue
+## 1. Repository Record
 
-5. Fall back to README analysis
-   - Extract name from heading
-   - Extract description from content
-   - Infer type from repository structure
-   - Use git tags for version
-```
+| Field | Value | Source |
+|-------|-------|--------|
+| `repository_identifier` | `example/readme-only` | `[header:repository-identifier]` |
+| `source_snapshot_identifier` | `export-1` | `[header:source-snapshot-identifier]` |
 
-### Output: Minimal Manifest
-```yaml
-component:
-  name: unknown-component
-  version: 0.0.1
-  type: unknown
-  description: Description extracted from README
-  repository: https://github.com/user/repo
-  warnings:
-    - Unable to determine package manager
-    - Version inferred from git tags
-    - Limited metadata extraction
-```
+## 2. Source Coverage
+
+| Path | Lines | Mapped to | Source |
+|------|-------|-----------|--------|
+| `README.md` | 3 | 7 | `[tree]` |
+
+## 3. Component Manifest
+
+none found in source
+
+## 4. Dependency Manifest
+
+none found in source
+
+## 5. Route Manifest
+
+none found in source
+
+## 6. Configuration Manifest
+
+none found in source
+
+## 7. Unmapped Source Items
+
+| Path | Item | Evidence |
+|------|------|----------|
+| `README.md` | `# Sample` | `[README.md:1-3]` |
+
+## 8. Translation Exceptions
+
+none found in source
