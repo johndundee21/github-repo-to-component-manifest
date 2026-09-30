@@ -1,0 +1,145 @@
+REPOSITORY IDENTIFIER
+RinDig/icm-architect
+
+SOURCE SNAPSHOT IDENTIFIER
+main-as-of-2026-09-30
+
+FILE TREE
+README.md
+package.json
+src/App.tsx
+src/main.tsx
+src/index.css
+tsconfig.json
+vite.config.ts
+
+--- README.md ---
+1: # ICM Architect
+2: 
+3: An intelligent agent system for enterprise architecture and business-IT alignment.
+4: 
+5: ## Overview
+6: 
+7: ICM Architect uses a multi-agent system to analyze and design enterprise architectures aligned with business strategy.
+8: 
+9: ## Features
+10: 
+11: - Business capability modeling
+12: - Value stream analysis
+13: - Application portfolio management
+14: - Technology standards governance
+15: 
+16: ## Tech Stack
+17: 
+18: - React + TypeScript
+19: - Vite
+20: - Tailwind CSS
+21: 
+22: ## Getting Started
+23: 
+24: ```bash
+25: npm install
+26: npm run dev
+27: ```
+
+--- package.json ---
+1: {
+2:   "name": "icm-architect",
+3:   "private": true,
+4:   "version": "0.0.1",
+5:   "type": "module",
+6:   "scripts": {
+7:     "dev": "vite",
+8:     "build": "tsc && vite build",
+9:     "preview": "vite preview"
+10:   },
+11:   "dependencies": {
+12:     "react": "^18.2.0",
+13:     "react-dom": "^18.2.0"
+14:   },
+15:   "devDependencies": {
+16:     "@types/react": "^18.2.0",
+17:     "@types/react-dom": "^18.2.0",
+18:     "@vitejs/plugin-react": "^4.0.0",
+19:     "typescript": "^5.0.0",
+20:     "vite": "^5.0.0"
+21:   }
+22: }
+
+--- src/App.tsx ---
+1: import { useState } from 'react'
+2: 
+3: function App() {
+4:   const [count, setCount] = useState(0)
+5: 
+6:   return (
+7:     <div className="app">
+8:       <h1>ICM Architect</h1>
+9:       <p>Enterprise Architecture Agent System</p>
+10:       <button onClick={() => setCount(count + 1)}>
+11:         Count: {count}
+12:       </button>
+13:     </div>
+14:   )
+15: }
+16: 
+17: export default App
+
+--- src/main.tsx ---
+1: import React from 'react'
+2: import ReactDOM from 'react-dom/client'
+3: import App from './App'
+4: import './index.css'
+5: 
+6: ReactDOM.createRoot(document.getElementById('root')!).render(
+7:   <React.StrictMode>
+8:     <App />
+9:   </React.StrictMode>
+10: )
+
+--- src/index.css ---
+1: :root {
+2:   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+3: }
+4: 
+5: body {
+6:   margin: 0;
+7:   min-width: 320px;
+8:   min-height: 100vh;
+9: }
+
+--- tsconfig.json ---
+1: {
+2:   "compilerOptions": {
+3:     "target": "ES2020",
+4:     "useDefineForClassFields": true,
+5:     "lib": ["ES2020", "DOM", "DOM.Iterable"],
+6:     "module": "ESNext",
+7:     "skipLibCheck": true,
+8:     "moduleResolution": "bundler",
+9:     "allowImportingTsExtensions": true,
+10:     "resolveJsonModule": true,
+11:     "isolatedModules": true,
+12:     "noEmit": true,
+13:     "jsx": "react-jsx",
+14:     "strict": true,
+15:     "noUnusedLocals": true,
+16:     "noUnusedParameters": true,
+17:     "noFallthroughCasesInSwitch": true
+18:   },
+19:   "include": ["src"],
+20:   "references": [{ "path": "./tsconfig.node.json" }]
+21: }
+
+--- vite.config.ts ---
+1: import { defineConfig } from 'vite'
+2: import react from '@vitejs/plugin-react'
+3: 
+4: export default defineConfig({
+5:   plugins: [react()],
+6:   server: {
+7:     port: 3000
+8:   }
+9: })
+
+--- END SNAPSHOT ---
