@@ -1,24 +1,51 @@
-# GitHub Repo to Component Manifest
+🧭 GitHub Repo → Component Manifest
+Property	Value
+Input	Repository snapshot (file tree + file contents, line-numbered)
+Output	Fixed-shape Component Manifest (8 sections, strict schema)
+Contract	Every output line cites [path:N-N], [header:...], or [tree], or says not in source
+What this converts
+text
+┌─────────────────────────────────────┐
+│  Repository Snapshot                │
+│  - FILE TREE                        │
+│  - File contents (line-numbered)    │
+│  - Optional headers                 │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  Component Manifest (strict, v2)    │
+│  1. Repository Record               │
+│  2. Source Coverage                 │
+│  3. Component Manifest              │
+│  4. Dependency Manifest             │
+│  5. Route Manifest                  │
+│  6. Configuration Manifest          │
+│  7. Unmapped Source Items           │
+│  8. Translation Exceptions          │
+└─────────────────────────────────────┘
+Purpose
+Convert repository evidence into a component-level handoff that another engineer or AI agent can extract, inspect, or replace without guessing. The manifest indexes:
 
-A comprehensive tool for converting GitHub repository structures into structured component manifests. This toolkit provides rules, examples, and reference documentation for generating semantic component metadata from repository analysis.
+✅ Source files (with coverage tracking)
 
-## Quick Start
+✅ Top-level declarations (functions, classes, consts, etc.)
 
-1. Review the [identity.md](identity.md) for core concepts
-2. Understand the [rules.md](rules.md) for processing guidelines
-3. Check [examples.md](examples.md) for sample transformations
-4. Reference [input-format.md](reference/input-format.md) for data structure specifications
-5. Review [output-schema.md](reference/output-schema.md) for manifest output format
+✅ Dependencies (package.json, imports, README mentions)
 
-## Contents
+✅ Routes (string-literal route declarations only)
 
-- **identity.md** - Core identity and purpose definitions
-- **rules.md** - Processing rules and guidelines
-- **examples.md** - Real-world conversion examples
-- **reference/** - Technical reference documentation
-  - **input-format.md** - Input data specifications
-  - **output-schema.md** - Output manifest schema
+✅ Configuration keys (explicit declarations in config files)
 
-## Purpose
+✅ Unmapped items (nothing silently dropped)
 
-This project enables automated or semi-automated conversion of GitHub repository metadata into standardized component manifests suitable for catalog systems, documentation generation, and system analysis.
+✅ Translation exceptions (missing files, doc/code mismatches, etc.)
+
+Non-negotiable rules
+Rule	Enforcement
+Fixed output shape	Eight mandatory sections in exact order; empty sections say none found in source
+Nothing invented	Every claim requires a locator ([path:N-N], [header:...], [tree]); missing fields say not in source
+Nothing dropped	Every supplied file appears in Section 2; every non-exempt line is cited in Sections 3–7
+This is an inventory and mapping tool, not an architectural review, summary, recommendation, or refactor plan.
+
+Source of truth: reference/output-schema.md (strict, v2) and rules.md.
