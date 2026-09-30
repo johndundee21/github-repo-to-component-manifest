@@ -1,202 +1,60 @@
-# Input Data Format Specification
+Input Format
+Supply a repository snapshot in plain text using this structure:
 
-## Repository Structure
+text
+REPOSITORY IDENTIFIER (optional)
+owner/repo
 
-The input is a GitHub repository that may contain one or more of these standard configuration files:
+SOURCE SNAPSHOT IDENTIFIER (optional)
+commit-or-export-label
 
-### JavaScript/Node.js
-**File:** `package.json`
+FILE TREE
+path/to/file1
+path/to/file2
+...
 
-```json
-{
-  "name": "package-name",
-  "version": "1.0.0",
-  "description": "Package description",
-  "keywords": ["tag1", "tag2"],
-  "author": "Author Name <author@example.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/user/repo.git"
-  },
-  "homepage": "https://example.com",
-  "bugs": {
-    "url": "https://github.com/user/repo/issues"
-  },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "dependencies": {
-    "dependency-name": "^1.0.0"
-  },
-  "devDependencies": {
-    "dev-tool": "^2.0.0"
-  },
-  "peerDependencies": {
-    "peer-package": "^3.0.0"
-  },
-  "optionalDependencies": {
-    "optional-package": "^4.0.0"
-  }
-}
-```
+--- path/to/file1 ---
+1: line one
+2: line two
+3: line three
 
-### Python
-**File:** `pyproject.toml` (modern) or `setup.py` (legacy)
+--- path/to/file2 ---
+1: ...
+Required elements
+FILE TREE — List every file path you want included, one per line.
 
-```toml
-[project]
-name = "package-name"
-version = "1.0.0"
-description = "Package description"
-authors = [
-  {name = "Author Name", email = "author@example.com"}
-]
-keywords = ["tag1", "tag2"]
-license = {text = "MIT"}
-requires-python = ">=3.8"
+File contents — For each file, provide the full text under a header --- path/to/file ---.
 
-[project.urls]
-Homepage = "https://example.com"
-Repository = "https://github.com/user/repo"
-Documentation = "https://docs.example.com"
+Line numbers — Prefix each line with N: where N is the line number (1-based). Do not change the content; only add line numbers.
 
-[project.dependencies]
-dependency-name = ">=1.0.0"
+Optional elements
+REPOSITORY IDENTIFIER — A single line with owner/repo or similar. If omitted, Section 1 will have not in source for repository_identifier.
 
-[project.optional-dependencies]
-dev = [
-  "pytest>=6.0",
-  "black>=21.0"
-]
-```
+SOURCE SNAPSHOT IDENTIFIER — A label such as a commit SHA, branch name, or export date.
 
-### Go
-**File:** `go.mod`
+Constraints
+Paths in the file tree must match the paths used in file headers.
 
-```
-module github.com/user/repo
+Preserve original content exactly; add line numbers only.
 
-go 1.20
+For binary, generated, or unreadable files, list the path in FILE TREE and either:
 
-require (
-  github.com/dependency/one v1.0.0
-  github.com/dependency/two v2.0.0
-)
+Provide no content (then Lines will be not supplied), or
 
-require (
-  github.com/indirect/dep v1.5.0 // indirect
-)
-```
+Explicitly mark content as unavailable in a comment. The translator will report this in Section 8 (unreadable-content).
 
-### Rust
-**File:** `Cargo.toml`
+Example (minimal)
+text
+REPOSITORY IDENTIFIER
+example/repo
 
-```toml
-[package]
-name = "package-name"
-version = "1.0.0"
-edition = "2021"
-authors = ["Author Name <author@example.com>"]
-description = "Package description"
-license = "MIT"
-repository = "https://github.com/user/repo"
-homepage = "https://example.com"
-keywords = ["tag1", "tag2"]
-categories = ["category1", "category2"]
+SOURCE SNAPSHOT IDENTIFIER
+main-2026-09-30
 
-[dependencies]
-dependency-name = "1.0"
+FILE TREE
+README.md
 
-[dev-dependencies]
-dev-tool = "2.0"
-
-[optional-dependencies]
-feature-name = ["optional-dep = 1.0"]
-```
-
-## README Metadata
-
-**File:** `README.md` (or `README.rst`, `README.txt`)
-
-Extracted data:
-- Title (first heading)
-- Description (first paragraph or introduction)
-- Features (bulleted or numbered lists)
-- Installation instructions
-- Usage examples and code snippets
-- Badges and metadata
-- Links to documentation
-- Contributor information
-
-## Git Metadata
-
-Extracted from repository:
-- Repository URL
-- Default branch
-- Latest tag/version
-- Commit history
-- Release notes
-- Contributors list
-
-## GitHub-Specific Metadata
-
-**From repository settings:**
-- Topics/tags
-- Description
-- Homepage URL
-- Visibility (public/private)
-- Is fork status
-- License (detected)
-- Primary language
-
-## Structured Data
-
-### Dependency Object
-```json
-{
-  "name": "dependency-name",
-  "version": "1.0.0",
-  "type": "direct|peer|optional|dev|indirect",
-  "url": "https://registry.example.com/package",
-  "optional": false
-}
-```
-
-### Person Object
-```json
-{
-  "name": "Full Name",
-  "email": "email@example.com",
-  "url": "https://github.com/username",
-  "role": "author|maintainer|contributor"
-}
-```
-
-### URL Object
-```json
-{
-  "type": "homepage|repository|documentation|issues|changelog",
-  "url": "https://example.com/path"
-}
-```
-
-## Data Validation
-
-### Required Fields
-- Package name (non-empty string)
-- Version (semantic versioning format)
-- Description (minimum 10 characters)
-
-### Optional but Recommended
-- Author/Maintainer information
-- License (SPDX identifier)
-- Repository URL
-- Keywords/tags (3-5 recommended)
-- Homepage URL
-
-### Format Constraints
-- Names: alphanumeric, hyphens, underscores (no spaces)
-- Versions: MAJOR.MINOR.PATCH format
-- URLs: valid HTTP/HTTPS URLs
-- Emails: valid email format
-- License: SPDX license identifier
+--- README.md ---
+1: # Example
+2: 
+3: A minimal repo.
